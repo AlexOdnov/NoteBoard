@@ -31,4 +31,7 @@ export default {
 .button.is-rounded {
   padding: 1em;
 }
+.button.is-small {
+  font-size: 0.5rem;
+}
 </style>
