@@ -40,25 +40,25 @@ export default {
     onToggleVisible(id, flag) {
       const note = this.notesList.find((el) => el.id === id);
       note.isVisible = flag;
-      this.$store.commit('updateNote', note);
+      this.$store.dispatch('updateNote', note);
     },
     onEditNote(id) {
       console.log(`edit note ${id}`);
     },
     onDeleteNote(id) {
       this.notesList = this.notesList.filter((el) => el.id !== id);
-      this.$store.commit('deleteNote', id);
+      this.$store.dispatch('deleteNote', id);
     },
     onFocusNote(id) {
       const note = this.notesList.find((el) => el.id === id);
       this.notesList = [...this.notesList.filter((el) => el.id !== id), note];
-      this.$store.commit('setNotesList', this.notesList);
+      this.$store.dispatch('setNotesList', this.notesList);
     },
     onMoveNote(id, top, left) {
       const note = this.notesList.find((el) => el.id === id);
       note.top = top;
       note.left = left;
-      this.$store.commit('updateNote', note);
+      this.$store.dispatch('updateNote', note);
     },
     onAddNote() {
       console.log('add new note');

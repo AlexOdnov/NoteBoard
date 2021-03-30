@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import { localStorageService } from './../services/localStorageService';
 
 export default createStore({
   state: {
@@ -23,6 +24,27 @@ export default createStore({
     getNotesList: (state) => state.notesList,
     getNote: (state) => (id) => state.notesList.filter((el) => el.id === id),
   },
-  actions: {},
+  actions: {
+    initStore({ commit }) {
+      const notesList = localStorageService.getItem();
+      commit('setNotesList', notesList);
+    },
+    deleteNote({ commit, state }, id) {
+      commit('deleteNote', id);
+      localStorageService.setItem(state.notesList);
+    },
+    addNote({ commit, state }, note) {
+      commit('addNote', note);
+      localStorageService.setItem(state.notesList);
+    },
+    updateNote({ commit, state }, note) {
+      commit('updateNote', note);
+      localStorageService.setItem(state.notesList);
+    },
+    setNotesList({ commit, state }, notesList) {
+      commit('setNotesList', notesList);
+      localStorageService.setItem(state.notesList);
+    },
+  },
   modules: {},
 });
