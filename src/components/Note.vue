@@ -1,6 +1,12 @@
 <template>
-  <article class="message" :style="{ top: top, left: left }">
-    <div class="message-header">
+  <article
+    class="message"
+    :style="{ top: topPos, left: leftPos }"
+    @mousedown="onFocusNote"
+    @mouseup="onMouseUp"
+    ref="note"
+  >
+    <div class="message-header" @mousedown="onMouseDown">
       <p class="message-title" :class="{ 'message-title-visible': isShow }">
         {{ title }}
       </p>
@@ -11,6 +17,8 @@
           iconSize="2x"
           :isRounded="true"
           :class="{ rotate: !isShow }"
+          @click="onToggleVisible"
+          @mousedown.stop
         />
         <icon-button
           type="pen"
@@ -18,6 +26,8 @@
           size="is-small"
           iconSize="lg"
           :isRounded="true"
+          @click="onEditNote"
+          @mousedown.stop
         />
         <icon-button
           type="times"
@@ -25,6 +35,8 @@
           size="is-small"
           iconSize="2x"
           :isRounded="true"
+          @click="onDeleteNote"
+          @mousedown.stop
         />
       </div>
     </div>
@@ -43,10 +55,71 @@ export default {
   props: {
     title: String,
     text: String,
-    isShow: Boolean,
+    isVisible: Boolean,
     top: String,
     left: String,
     id: String,
+  },
+  emits: ['toggleVisible', 'editNote', 'deleteNote', 'focusNote', 'moveNote'],
+  data() {
+    return {
+      isShow: this.isVisible,
+      topPos: this.top,
+      leftPos: this.left,
+      screenHeight: 0,
+      screenWidth: 0,
+      shiftY: 0,
+      shiftX: 0,
+      isMove: false,
+    };
+  },
+  methods: {
+    onToggleVisible() {
+      this.isShow = !this.isShow;
+      this.$emit('toggleVisible', this.id, this.isShow);
+    },
+    onEditNote() {
+      this.$emit('editNote', this.id);
+    },
+    onDeleteNote() {
+      this.$emit('deleteNote', this.id);
+    },
+    onFocusNote() {
+      this.$emit('focusNote', this.id);
+    },
+    onMouseDown(e) {
+      this.screenHeight = document.documentElement.clientHeight;
+      this.screenWidth = document.documentElement.clientWidth;
+      this.shiftY = e.pageY - this.$refs.note.getBoundingClientRect().top;
+      this.shiftX = e.pageX - this.$refs.note.getBoundingClientRect().left;
+      this.isMove = true;
+      document.addEventListener('mousemove', this.move);
+    },
+    move(e) {
+      const topPos =
+        e.pageY - this.shiftY + this.$refs.note.offsetHeight < this.screenHeight
+          ? e.pageY - this.shiftY
+          : this.screenHeight - this.$refs.note.offsetHeight;
+
+      const relativeTopPos = ((topPos / this.screenHeight) * 100).toFixed(2);
+
+      const leftPos =
+        e.pageX - this.shiftX + this.$refs.note.offsetWidth < this.screenWidth
+          ? e.pageX - this.shiftX
+          : this.screenWidth - this.$refs.note.offsetWidth;
+
+      const relativeLeftPos = ((leftPos / this.screenWidth) * 100).toFixed(2);
+
+      this.topPos = relativeTopPos > 0 ? relativeTopPos + '%' : '0%';
+      this.leftPos = relativeLeftPos > 0 ? relativeLeftPos + '%' : '0%';
+    },
+    onMouseUp() {
+      if (this.isMove) {
+        document.removeEventListener('mousemove', this.move);
+        this.isMove = false;
+        this.$emit('moveNote', this.id, this.topPos, this.leftPos);
+      }
+    },
   },
 };
 </script>
