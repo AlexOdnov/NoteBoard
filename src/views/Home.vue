@@ -1,7 +1,7 @@
 <template>
   <div id="board">
     <note
-      v-for="(note, index) in notesList"
+      v-for="(note, index) in filteredNotesList"
       :key="note.id"
       v-bind="note"
       :style="{ zIndex: index }"
@@ -20,20 +20,23 @@
       :isRounded="true"
       @click="onAddNote"
     />
+    <filter-form id="filterForm" @changeFilter="onChangeFilter" />
   </div>
 </template>
 
 <script>
 import IconButton from '../components/IconButton.vue';
 import Note from '../components/Note.vue';
+import FilterForm from '../components/FilterForm.vue';
 
 export default {
-  components: { Note, IconButton },
+  components: { Note, IconButton, FilterForm },
   name: 'Home',
 
   data() {
     return {
       notesList: [],
+      filter: '',
     };
   },
   methods: {
@@ -63,6 +66,9 @@ export default {
     onAddNote() {
       console.log('add new note');
     },
+    onChangeFilter(filter) {
+      this.filter = filter;
+    },
   },
 
   created() {
@@ -79,6 +85,19 @@ export default {
     const notesList = this.$store.getters.getNotesList;
     this.notesList = notesList.length ? notesList : placeholder;
   },
+
+  computed: {
+    filteredNotesList() {
+      if (!this.filter) {
+        return this.notesList;
+      } else {
+        return this.notesList.filter(
+          (el) =>
+            el.title.includes(this.filter) || el.text.includes(this.filter)
+        );
+      }
+    },
+  },
 };
 </script>
 
@@ -92,5 +111,13 @@ export default {
   right: 1rem;
   bottom: 1rem;
   z-index: 999;
+}
+#filterForm {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  z-index: 999;
+  width: 320px;
+  transform: translate(-50%);
 }
 </style>
