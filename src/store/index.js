@@ -22,7 +22,7 @@ export default createStore({
   },
   getters: {
     getNotesList: (state) => state.notesList,
-    getNote: (state) => (id) => state.notesList.filter((el) => el.id === id),
+    getNote: (state) => (id) => state.notesList.find((el) => el.id === id),
   },
   actions: {
     initStore({ commit }) {
