@@ -21,4 +21,9 @@ export default {
 #editForm {
   align-self: center;
 }
+@media (max-width: 1023px) {
+  #editForm {
+    margin: 0 1rem;
+  }
+}
 </style>

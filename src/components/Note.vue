@@ -3,10 +3,16 @@
     class="message"
     :style="{ top: topPos, left: leftPos }"
     @mousedown="onFocusNote"
+    @touchstart="onFocusNote"
     @mouseup="onMouseUp"
+    @touchend="onMouseUp"
     ref="note"
   >
-    <div class="message-header" @mousedown="onMouseDown">
+    <div
+      class="message-header"
+      @mousedown="onMouseDown"
+      @touchstart.prevent="onMouseDown"
+    >
       <p class="message-title" :class="{ 'message-title-visible': isShow }">
         {{ title }}
       </p>
@@ -19,6 +25,7 @@
           :class="{ rotate: !isShow }"
           @click="onToggleVisible"
           @mousedown.stop
+          @touchstart.stop
         />
         <icon-button
           type="pen"
@@ -28,6 +35,7 @@
           :isRounded="true"
           @click="onEditNote"
           @mousedown.stop
+          @touchstart.stop
         />
         <icon-button
           type="times"
@@ -37,6 +45,7 @@
           :isRounded="true"
           @click="onDeleteNote"
           @mousedown.stop
+          @touchstart.stop
         />
       </div>
     </div>
@@ -89,24 +98,31 @@ export default {
       this.$emit('focusNote', this.id);
     },
     onMouseDown(e) {
+      const coordY = e.pageY ? e.pageY : e.touches[0].pageY;
+      const coordX = e.pageX ? e.pageX : e.touches[0].pageX;
+
       this.screenHeight = document.documentElement.clientHeight;
       this.screenWidth = document.documentElement.clientWidth;
-      this.shiftY = e.pageY - this.$refs.note.getBoundingClientRect().top;
-      this.shiftX = e.pageX - this.$refs.note.getBoundingClientRect().left;
+      this.shiftY = coordY - this.$refs.note.getBoundingClientRect().top;
+      this.shiftX = coordX - this.$refs.note.getBoundingClientRect().left;
       this.isMove = true;
       document.addEventListener('mousemove', this.move);
+      document.addEventListener('touchmove', this.move);
     },
     move: throttle(function (e) {
+      const coordY = e.pageY ? e.pageY : e.touches[0].pageY;
+      const coordX = e.pageX ? e.pageX : e.touches[0].pageX;
+
       const topPos =
-        e.pageY - this.shiftY + this.$refs.note.offsetHeight < this.screenHeight
-          ? e.pageY - this.shiftY
+        coordY - this.shiftY + this.$refs.note.offsetHeight < this.screenHeight
+          ? coordY - this.shiftY
           : this.screenHeight - this.$refs.note.offsetHeight;
 
       const relativeTopPos = ((topPos / this.screenHeight) * 100).toFixed(2);
 
       const leftPos =
-        e.pageX - this.shiftX + this.$refs.note.offsetWidth < this.screenWidth
-          ? e.pageX - this.shiftX
+        coordX - this.shiftX + this.$refs.note.offsetWidth < this.screenWidth
+          ? coordX - this.shiftX
           : this.screenWidth - this.$refs.note.offsetWidth;
 
       const relativeLeftPos = ((leftPos / this.screenWidth) * 100).toFixed(2);
@@ -117,6 +133,7 @@ export default {
     onMouseUp() {
       if (this.isMove) {
         document.removeEventListener('mousemove', this.move);
+        document.removeEventListener('touchmove', this.move);
         this.isMove = false;
         this.$emit('moveNote', this.id, this.topPos, this.leftPos);
       }

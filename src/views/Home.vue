@@ -120,4 +120,11 @@ export default {
   width: 320px;
   transform: translate(-50%);
 }
+@media (max-width: 510px) {
+  #filterForm {
+    left: 1rem;
+    width: calc(100vw - 3rem - 60px);
+    transform: translate(0);
+  }
+}
 </style>
