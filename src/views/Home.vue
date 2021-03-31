@@ -46,7 +46,7 @@ export default {
       this.$store.dispatch('updateNote', note);
     },
     onEditNote(id) {
-      console.log(`edit note ${id}`);
+      this.$router.push({ name: 'Edit', query: { id: id } });
     },
     onDeleteNote(id) {
       this.notesList = this.notesList.filter((el) => el.id !== id);
@@ -64,7 +64,7 @@ export default {
       this.$store.dispatch('updateNote', note);
     },
     onAddNote() {
-      console.log('add new note');
+      this.$router.push({ name: 'Edit' });
     },
     onChangeFilter(filter) {
       this.filter = filter;
