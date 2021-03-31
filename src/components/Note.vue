@@ -48,6 +48,7 @@
 
 <script>
 import IconButton from './IconButton.vue';
+import { throttle } from '../helpers/helpers.js';
 
 export default {
   components: { IconButton },
@@ -95,7 +96,7 @@ export default {
       this.isMove = true;
       document.addEventListener('mousemove', this.move);
     },
-    move(e) {
+    move: throttle(function (e) {
       const topPos =
         e.pageY - this.shiftY + this.$refs.note.offsetHeight < this.screenHeight
           ? e.pageY - this.shiftY
@@ -112,7 +113,7 @@ export default {
 
       this.topPos = relativeTopPos > 0 ? relativeTopPos + '%' : '0%';
       this.leftPos = relativeLeftPos > 0 ? relativeLeftPos + '%' : '0%';
-    },
+    }, 12),
     onMouseUp() {
       if (this.isMove) {
         document.removeEventListener('mousemove', this.move);
