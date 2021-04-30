@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
 import IconButton from '../components/IconButton.vue';
 import Note from '../components/Note.vue';
 import FilterForm from '../components/FilterForm.vue';
@@ -35,33 +36,30 @@ export default {
 
   data() {
     return {
-      notesList: [],
       filter: '',
     };
   },
   methods: {
+    ...mapActions(['updateNote', 'setNotesList']),
+    ...mapActions({ onDeleteNote: 'deleteNote' }),
     onToggleVisible(id, flag) {
       const note = this.notesList.find((el) => el.id === id);
       note.isVisible = flag;
-      this.$store.dispatch('updateNote', note);
+      this.updateNote(note);
     },
     onEditNote(id) {
       this.$router.push({ name: 'Edit', query: { id: id } });
     },
-    onDeleteNote(id) {
-      this.notesList = this.notesList.filter((el) => el.id !== id);
-      this.$store.dispatch('deleteNote', id);
-    },
     onFocusNote(id) {
       const note = this.notesList.find((el) => el.id === id);
-      this.notesList = [...this.notesList.filter((el) => el.id !== id), note];
-      this.$store.dispatch('setNotesList', this.notesList);
+      const notesList = [...this.notesList.filter((el) => el.id !== id), note];
+      this.setNotesList(notesList);
     },
     onMoveNote(id, top, left) {
       const note = this.notesList.find((el) => el.id === id);
       note.top = top;
       note.left = left;
-      this.$store.dispatch('updateNote', note);
+      this.updateNote(note);
     },
     onAddNote() {
       this.$router.push({ name: 'Edit' });
@@ -71,22 +69,8 @@ export default {
     },
   },
 
-  created() {
-    const placeholder = [
-      {
-        title: 'Привет!',
-        text: 'Добавьте свою первую заметку',
-        isVisible: true,
-        top: 'calc( 50% - 160px)',
-        left: 'calc( 50% - 160px)',
-        id: '',
-      },
-    ];
-    const notesList = this.$store.getters.getNotesList;
-    this.notesList = notesList.length ? notesList : placeholder;
-  },
-
   computed: {
+    ...mapState(['notesList']),
     filteredNotesList() {
       if (!this.filter) {
         return this.notesList;

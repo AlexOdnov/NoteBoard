@@ -39,6 +39,7 @@
 
 <script>
 import getId from '../helpers/getId.js';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'NoteForm',
@@ -53,6 +54,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['updateNote', 'addNote']),
     resetNote() {
       this.title = '';
       this.text = '';
@@ -71,11 +73,11 @@ export default {
         id: this.id,
       };
       if (note.id) {
-        this.$store.dispatch('updateNote', note);
+        this.updateNote(note);
         this.$router.push({ name: 'Edit' });
       } else {
         note.id = getId();
-        this.$store.dispatch('addNote', note);
+        this.addNote(note);
       }
       this.resetNote();
     },

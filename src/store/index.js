@@ -3,7 +3,16 @@ import { localStorageService } from './../services/localStorageService';
 
 export default createStore({
   state: {
-    notesList: [],
+    notesList: [
+      {
+        title: 'Привет!',
+        text: 'Добавьте свою первую заметку',
+        isVisible: true,
+        top: 'calc( 50% - 160px )',
+        left: 'calc( 50% - 160px )',
+        id: '',
+      },
+    ],
   },
   mutations: {
     setNotesList(state, notesList) {
@@ -21,13 +30,14 @@ export default createStore({
     },
   },
   getters: {
-    getNotesList: (state) => state.notesList,
     getNote: (state) => (id) => state.notesList.find((el) => el.id === id),
   },
   actions: {
     initStore({ commit }) {
       const notesList = localStorageService.getItem();
-      commit('setNotesList', notesList);
+      if (notesList.length) {
+        commit('setNotesList', notesList);
+      }
     },
     deleteNote({ commit, state }, id) {
       commit('deleteNote', id);
