@@ -11,6 +11,7 @@
     </div>
     <div class="control">
       <icon-button
+        aria-label="очистить фильтр"
         type="times"
         size="is-medium"
         iconSize="lg"

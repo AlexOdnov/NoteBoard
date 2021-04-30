@@ -13,6 +13,7 @@
     />
     <icon-button
       id="addBtn"
+      aria-label="добавить заметку"
       type="plus"
       color="is-success"
       size="is-large"

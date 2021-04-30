@@ -18,6 +18,7 @@
       </p>
       <div class="buttons">
         <icon-button
+          aria-label="свернуть заметку"
           type="chevron-up"
           size="is-small"
           iconSize="2x"
@@ -28,6 +29,7 @@
           @touchstart.stop
         />
         <icon-button
+          aria-label="редактировать заметку"
           type="pen"
           color="is-success"
           size="is-small"
@@ -38,6 +40,7 @@
           @touchstart.stop
         />
         <icon-button
+          aria-label="удалить заметку"
           type="times"
           color="is-danger"
           size="is-small"
